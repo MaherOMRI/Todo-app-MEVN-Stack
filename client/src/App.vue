@@ -45,18 +45,18 @@ export default {
     }
   },
   async mounted () {
-    const response = await axios.get('http://localhost:5000/api/bucketListItems/')
+    const response = await axios.get('/api/bucketListItems/')
     this.items = response.data
   },
   methods: {
     async addItem () {
-      const response = await axios.post('http://localhost:5000/api/bucketListItems/',
+      const response = await axios.post('/api/bucketListItems/',
         { description: this.description })
       this.items.push(response.data)
       this.description = ''
     },
     async removeItem (item, i) {
-      await axios.delete('http://localhost:5000/api/bucketListItems/' + item._id)
+      await axios.delete('/api/bucketListItems/' + item._id)
       this.items.splice(i, 1)
     },
     select (item) {
@@ -71,7 +71,7 @@ export default {
       this.editedDescription = ''
     },
     async saveChanges (item, i) {
-      const response = await axios.put('http://localhost:5000/api/bucketListItems/' + item._id,
+      const response = await axios.put('/api/bucketListItems/' + item._id,
         { description: this.editedDescription })
       this.items[i] = response.data
       this.unSelect()
