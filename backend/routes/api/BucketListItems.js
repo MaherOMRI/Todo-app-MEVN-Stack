@@ -30,7 +30,7 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
     const { id } = req.params
     try {
-        const response = await bucketListItem.findByIdAndUpdate(id, req.body)
+        const response = await BucketListItem.findByIdAndUpdate(id, req.body)
         if (!response) throw error('Something went wrong updating')
         const updated = { ...response._doc, ...req.body }
         res.status(200).json(updated)
@@ -39,10 +39,10 @@ router.put('/:id', async (req, res) => {
     }
 })
 
-router.put('/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
     const { id } = req.params
     try {
-        const deleted = await bucketListItem.findByIdAndDelete(id)
+        const deleted = await BucketListItem.findByIdAndDelete(id)
         if (!deleted) throw error('Something went wrong deleting')
         res.status(200).json(deleted)
     } catch (error) {

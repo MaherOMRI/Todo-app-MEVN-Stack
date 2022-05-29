@@ -11,10 +11,23 @@
     </div>
     <!--display buckets list-->
     <div class="notification" v-for="(item, i) in items" :key="item._id">
-      <p>
-      <span class="tag is-primary">{{i + 1}}</span>
-      {{item.description}}
-      </p>
+      <div class="columns">
+        <input class="column input" v-model="editedDescription" v-if="isSelected (item)">
+        <p v-else class="column">
+          <span class="tag is-primary">
+            {{ i + 1 }}
+          </span>
+            {{ item.description }}
+        </p>
+          <div class="column is-narrow">
+            <span class="icon has-text-info" @click="isSelected (item) ? unSelect (item) : select(item)">
+              <i class="material-icons">{{isSelected(item) ? 'close':'edit'}}</i>
+            </span>
+            <span class="icon has-text-info" @click="isSelected (item) ? saveChanges (item, i) : removeItem (item, i)">
+              <i class="material-icons">{{isSelected(item) ? 'save':'delete'}}</i>
+            </span>
+          </div>
+      </div>
     </div>
   </div>
 </template>
@@ -26,7 +39,9 @@ export default {
   data () {
     return {
       items: [],
-      description: ''
+      description: '',
+      editedDescription: '',
+      selected: {}
     }
   },
   async mounted () {
@@ -39,6 +54,27 @@ export default {
         { description: this.description })
       this.items.push(response.data)
       this.description = ''
+    },
+    async removeItem (item, i) {
+      await axios.delete('http://localhost:5000/api/bucketListItems/' + item._id)
+      this.items.splice(i, 1)
+    },
+    select (item) {
+      this.selected = item
+      this.editedDescription = item.description
+    },
+    isSelected (item) {
+      return item._id === this.selected._id
+    },
+    unSelect () {
+      this.selected = {}
+      this.editedDescription = ''
+    },
+    async saveChanges (item, i) {
+      const response = await axios.put('http://localhost:5000/api/bucketListItems/' + item._id,
+        { description: this.editedDescription })
+      this.items[i] = response.data
+      this.unSelect()
     }
   }
 
@@ -59,6 +95,9 @@ export default {
   margin-bottom: 4rem;
   font-weight: bold;
   font-size: 34px;
+}
+.icon{
+  cursor: pointer
 }
 
 </style>
